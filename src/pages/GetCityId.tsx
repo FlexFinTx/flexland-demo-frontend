@@ -4,8 +4,9 @@ import GetCredBanner from "../components/GetCredBanner/GetCredBanner";
 import GetCredInfo, { GetCredInfoProps } from "../components/GetCredInfo/GetCredInfo";
 import GetCredMenu, { GetCredMenuProps } from "../components/GetCredMenu/GetCredMenu";
 import GetCredReceive from "../components/GetCredReceive/GetCredReceive";
+import GetCredShare from "../components/GetCredShare/GetCredShare";
 import GetCredVerifying from "../components/GetCredVerifying/GetCredVerifying";
-import { cityIdCard, sampleCredential } from "../constants"
+import { cityIdCard, sampleCredential, samplePresentationRequest } from "../constants"
 
 function GetCityId() {
 
@@ -22,7 +23,7 @@ function GetCityId() {
 
   const cityMenuProps: GetCredMenuProps = {
     label: cityIdCard.idType,
-    menuItems: ["City ID", "Enter Your Information", "Get Verified", "Receive City ID"],
+    menuItems: ["Login with FlexID", "City ID", "Enter Your Information", "Get Verified", "Receive City ID"],
     activeIdx: 0,
   }
 
@@ -40,12 +41,14 @@ function GetCityId() {
 
   function showScreen() {
     if (activeIdx === 0) {
+      return (<GetCredShare toShare={["DIDAuth"]} imageUrl={samplePresentationRequest} incrementFn={incrementIdx} />)
+    } else if (activeIdx === 1) {
       return (
         <GetCredInfo title={cityInfoProps.title} contentItems={cityInfoProps.contentItems} shareString={cityInfoProps.shareString} toShare={cityInfoProps.toShare} incrementFn={cityInfoProps.incrementFn} />
       );
-    } else if (activeIdx === 1) {
-      return (<EnterInfoForm incrementFn={incrementIdx} />);
     } else if (activeIdx === 2) {
+      return (<EnterInfoForm incrementFn={incrementIdx} />);
+    } else if (activeIdx === 3) {
       return (<GetCredVerifying name={cityIdCard.title} incrementFn={incrementIdx} />)
     } else {
       return (<GetCredReceive idType={cityIdCard.idType} imageUrl={sampleCredential} incrementFn={incrementIdx} />)

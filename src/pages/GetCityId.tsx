@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import EnterInfoForm from "../components/EnterInfoForm/EnterInfoForm";
 import GetCredBanner from "../components/GetCredBanner/GetCredBanner";
 import GetCredInfo, { GetCredInfoProps } from "../components/GetCredInfo/GetCredInfo";
@@ -6,11 +7,39 @@ import GetCredMenu, { GetCredMenuProps } from "../components/GetCredMenu/GetCred
 import GetCredReceive from "../components/GetCredReceive/GetCredReceive";
 import GetCredShare from "../components/GetCredShare/GetCredShare";
 import GetCredVerifying from "../components/GetCredVerifying/GetCredVerifying";
-import { cityIdCard, sampleCredential, samplePresentationRequest } from "../constants"
+import { cityIdCard } from "../constants"
 
 function GetCityId() {
 
   const [activeIdx, setActiveIdx] = useState(0);
+
+  const [prImageUrl, setPrImageUrl] = useState("");
+
+  const [shareStatus, setShareStatus] = useState(false);
+
+  const [credImageUrl, setCredImageUrl] = useState("");
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/did/pr").then(response => {
+      setPrImageUrl(response.data.qrcode);
+    })
+  }, [])
+
+  useEffect(() => {
+    setInterval(() => {
+      axios.get("http://localhost:5000/did/poll").then(response => {
+        if (response.status === 200) {
+          setShareStatus(true);
+        }
+      })
+    }, 2000)
+  }, [])
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/city/cred").then(response => {
+      setCredImageUrl(response.data.qrcode);
+    })
+  }, [shareStatus])
 
   function incrementIdx(data?: any) {
     if (activeIdx < cityMenuProps.menuItems.length - 1) {
@@ -41,7 +70,7 @@ function GetCityId() {
 
   function showScreen() {
     if (activeIdx === 0) {
-      return (<GetCredShare toShare={["DIDAuth"]} imageUrl={samplePresentationRequest} incrementFn={incrementIdx} />)
+      return (<GetCredShare toShare={["DIDAuth"]} imageUrl={prImageUrl} shareStatus={shareStatus} incrementFn={incrementIdx} />)
     } else if (activeIdx === 1) {
       return (
         <GetCredInfo title={cityInfoProps.title} contentItems={cityInfoProps.contentItems} shareString={cityInfoProps.shareString} toShare={cityInfoProps.toShare} incrementFn={cityInfoProps.incrementFn} />
@@ -51,7 +80,7 @@ function GetCityId() {
     } else if (activeIdx === 3) {
       return (<GetCredVerifying name={cityIdCard.title} incrementFn={incrementIdx} />)
     } else {
-      return (<GetCredReceive idType={cityIdCard.idType} imageUrl={sampleCredential} incrementFn={incrementIdx} />)
+      return (<GetCredReceive idType={cityIdCard.idType} imageUrl={credImageUrl} incrementFn={incrementIdx} />)
     }
   }
 

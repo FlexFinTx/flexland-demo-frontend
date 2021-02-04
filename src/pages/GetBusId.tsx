@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import GetCredBanner from "../components/GetCredBanner/GetCredBanner";
 import GetCredInfo, { GetCredInfoProps } from "../components/GetCredInfo/GetCredInfo";
 import GetCredMenu, { GetCredMenuProps } from "../components/GetCredMenu/GetCredMenu";
@@ -11,6 +12,34 @@ import { busPass, sampleCredential, samplePresentationRequest } from "../constan
 function GetBusId() {
 
   const [activeIdx, setActiveIdx] = useState(0);
+
+  const [prImageUrl, setPrImageUrl] = useState("");
+
+  const [shareStatus, setShareStatus] = useState(false);
+
+  const [credImageUrl, setCredImageUrl] = useState("");
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/bus/pr").then(response => {
+      setPrImageUrl(response.data.qrcode);
+    })
+  }, [])
+
+  useEffect(() => {
+    setInterval(() => {
+      axios.get("http://localhost:5000/bus/poll").then(response => {
+        if (response.status === 200) {
+          setShareStatus(true);
+        }
+      })
+    }, 2000)
+  }, [])
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/bus/cred").then(response => {
+      setCredImageUrl(response.data.qrcode);
+    })
+  }, [shareStatus])
 
   function incrementIdx() {
     if (activeIdx < busMenuProps.menuItems.length - 1) {
@@ -44,11 +73,11 @@ function GetBusId() {
         <GetCredInfo title={busInfoProps.title} contentItems={busInfoProps.contentItems} shareString={busInfoProps.shareString} toShare={busInfoProps.toShare} incrementFn={busInfoProps.incrementFn} />
       )
     } else if (activeIdx === 1) {
-      return (<GetCredShare toShare={busPass.toShare} imageUrl={samplePresentationRequest} incrementFn={incrementIdx} />)
+      return (<GetCredShare toShare={busPass.toShare} shareStatus={shareStatus} imageUrl={prImageUrl} incrementFn={incrementIdx} />)
     } else if (activeIdx === 2) {
       return (<GetCredVerifying name={busPass.title} incrementFn={incrementIdx} />)
     } else {
-      return (<GetCredReceive idType={busPass.idType} imageUrl={sampleCredential} incrementFn={incrementIdx} />)
+      return (<GetCredReceive idType={busPass.idType} imageUrl={credImageUrl} incrementFn={incrementIdx} />)
     }
   }
 

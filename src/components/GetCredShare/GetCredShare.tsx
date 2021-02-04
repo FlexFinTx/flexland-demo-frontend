@@ -4,12 +4,11 @@ import "./GetCredShare.css";
 type GetCredShareProps = {
   toShare: string[];
   imageUrl: string;
+  shareStatus: boolean;
   incrementFn: () => void;
 }
 
-function GetCredShare({ toShare, imageUrl, incrementFn }: GetCredShareProps) {
-  const [shareStatus, setShareStatus] = useState(false);
-
+function GetCredShare({ toShare, imageUrl, shareStatus, incrementFn }: GetCredShareProps) {
   function showSpinnerOrCheck() {
     if (!shareStatus) {
       return (
@@ -24,12 +23,6 @@ function GetCredShare({ toShare, imageUrl, incrementFn }: GetCredShareProps) {
       )
     }
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-      setShareStatus(true);
-    }, 5000)
-  })
 
   return (
     <div className="card">

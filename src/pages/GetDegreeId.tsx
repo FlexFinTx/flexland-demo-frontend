@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 import GetCredBanner from "../components/GetCredBanner/GetCredBanner";
 import GetCredInfo, { GetCredInfoProps } from "../components/GetCredInfo/GetCredInfo";
 import GetCredMenu, { GetCredMenuProps } from "../components/GetCredMenu/GetCredMenu";
@@ -9,6 +10,34 @@ import { degreeIdCard, sampleCredential, samplePresentationRequest } from "../co
 
 function GetDegreeId() {
   const [activeIdx, setActiveIdx] = useState(0);
+
+  const [prImageUrl, setPrImageUrl] = useState("");
+
+  const [shareStatus, setShareStatus] = useState(false);
+
+  const [credImageUrl, setCredImageUrl] = useState("");
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/degree/pr").then(response => {
+      setPrImageUrl(response.data.qrcode);
+    })
+  }, [])
+
+  useEffect(() => {
+    setInterval(() => {
+      axios.get("http://localhost:5000/degree/poll").then(response => {
+        if (response.status === 200) {
+          setShareStatus(true);
+        }
+      })
+    }, 2000)
+  }, [])
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/degree/cred").then(response => {
+      setCredImageUrl(response.data.qrcode);
+    })
+  }, [shareStatus])
 
   function incrementIdx() {
     if (activeIdx < degreeMenuProps.menuItems.length - 1) {
@@ -42,11 +71,11 @@ function GetDegreeId() {
         <GetCredInfo title={degreeInfoProps.title} contentItems={degreeInfoProps.contentItems} shareString={degreeInfoProps.shareString} toShare={degreeInfoProps.toShare} incrementFn={degreeInfoProps.incrementFn} />
       )
     } else if (activeIdx === 1) {
-      return (<GetCredShare toShare={degreeIdCard.toShare} imageUrl={samplePresentationRequest} incrementFn={incrementIdx} />)
+      return (<GetCredShare toShare={degreeIdCard.toShare} shareStatus={shareStatus} imageUrl={prImageUrl} incrementFn={incrementIdx} />)
     } else if (activeIdx === 2) {
       return (<GetCredVerifying name={degreeIdCard.title} incrementFn={incrementIdx} />)
     } else {
-      return (<GetCredReceive idType={degreeIdCard.idType} imageUrl={sampleCredential} incrementFn={incrementIdx} />)
+      return (<GetCredReceive idType={degreeIdCard.idType} imageUrl={credImageUrl} incrementFn={incrementIdx} />)
     }
   }
 

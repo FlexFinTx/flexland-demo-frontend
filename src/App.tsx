@@ -1,25 +1,26 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import GetBusId from './pages/GetBusId';
+import GetCityId from './pages/GetCityId';
+import GetDegreeId from './pages/GetDegreeId';
+import GetInsuranceId from './pages/GetInsuranceId';
+import GetJobId from './pages/GetJobId';
+import Homepage from "./pages/Homepage";
+import SeeYou from './pages/SeeYou';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/" component={Homepage} />
+        <Route exact path="/seeyou" component={SeeYou} />
+        <Route exact path="/cityid" component={GetCityId} />
+        <Route exact path="/degreeid" component={GetDegreeId} />
+        <Route exact path="/jobid" component={GetJobId} />
+        <Route exact path="/busid" component={GetBusId} />
+        <Route exact path="/insuranceid" component={GetInsuranceId} />
+      </Switch>
+    </Router>
   );
 }
 

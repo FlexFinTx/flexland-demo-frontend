@@ -9,6 +9,13 @@ import GetCredShare from "../components/GetCredShare/GetCredShare";
 import GetCredVerifying from "../components/GetCredVerifying/GetCredVerifying";
 import { cityIdCard } from "../constants"
 
+export interface CitySubmitInfo {
+  givenName: string;
+  familyName: string;
+  address: string;
+  birthDate: string;
+}
+
 function GetCityId() {
 
   const [activeIdx, setActiveIdx] = useState(0);
@@ -19,6 +26,8 @@ function GetCityId() {
 
   const [credImageUrl, setCredImageUrl] = useState("");
 
+  const [submitInfo, setSubmitInfo] = useState<CitySubmitInfo>();
+
   useEffect(() => {
     axios.get("http://localhost:5000/did/pr").then(response => {
       setPrImageUrl(response.data.qrcode);
@@ -27,19 +36,27 @@ function GetCityId() {
 
   useEffect(() => {
     setInterval(() => {
+      if (!shareStatus) {
       axios.get("http://localhost:5000/did/poll").then(response => {
         if (response.status === 200) {
           setShareStatus(true);
         }
       })
+    }
     }, 2000)
   }, [])
 
   useEffect(() => {
-    axios.get("http://localhost:5000/city/cred").then(response => {
+    if (submitInfo) {
+    console.log(submitInfo);
+    axios.post("http://localhost:5000/city/cred", {
+      ...submitInfo
+    }).then(response => {
       setCredImageUrl(response.data.qrcode);
     })
-  }, [shareStatus])
+  }
+
+  }, [submitInfo])
 
   function incrementIdx(data?: any) {
     if (activeIdx < cityMenuProps.menuItems.length - 1) {
@@ -76,7 +93,7 @@ function GetCityId() {
         <GetCredInfo title={cityInfoProps.title} contentItems={cityInfoProps.contentItems} shareString={cityInfoProps.shareString} toShare={cityInfoProps.toShare} incrementFn={cityInfoProps.incrementFn} />
       );
     } else if (activeIdx === 2) {
-      return (<EnterInfoForm incrementFn={incrementIdx} />);
+      return (<EnterInfoForm incrementFn={incrementIdx} setFn={setSubmitInfo} />);
     } else if (activeIdx === 3) {
       return (<GetCredVerifying name={cityIdCard.title} incrementFn={incrementIdx} />)
     } else {

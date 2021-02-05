@@ -25,18 +25,22 @@ function GetDegreeId() {
 
   useEffect(() => {
     setInterval(() => {
-      axios.get("http://localhost:5000/degree/poll").then(response => {
-        if (response.status === 200) {
-          setShareStatus(true);
-        }
-      })
+      if (!shareStatus) {
+        axios.get("http://localhost:5000/degree/poll").then(response => {
+          if (response.status === 200) {
+            setShareStatus(true);
+          }
+        })
+      }
     }, 2000)
   }, [])
 
   useEffect(() => {
-    axios.get("http://localhost:5000/degree/cred").then(response => {
-      setCredImageUrl(response.data.qrcode);
-    })
+    if (shareStatus) {
+      axios.post("http://localhost:5000/degree/cred").then(response => {
+        setCredImageUrl(response.data.qrcode);
+      })
+    }
   }, [shareStatus])
 
   function incrementIdx() {

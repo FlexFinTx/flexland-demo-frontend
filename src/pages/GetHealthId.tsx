@@ -10,9 +10,9 @@ import GetCredMenu, {
 import GetCredReceive from "../components/GetCredReceive/GetCredReceive";
 import GetCredShare from "../components/GetCredShare/GetCredShare";
 import GetCredVerifying from "../components/GetCredVerifying/GetCredVerifying";
-import { insuranceCoverage } from "../constants";
+import { healthId } from "../constants";
 
-function GetInsuranceId() {
+function GetHealthId() {
   const [activeIdx, setActiveIdx] = useState(0);
 
   const [prImageUrl, setPrImageUrl] = useState("");
@@ -22,7 +22,7 @@ function GetInsuranceId() {
   const [credImageUrl, setCredImageUrl] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/insurance/pr").then((response) => {
+    axios.get("http://localhost:5000/health/pr").then((response) => {
       setPrImageUrl(response.data.qrcode);
     });
   }, []);
@@ -30,7 +30,7 @@ function GetInsuranceId() {
   useEffect(() => {
     setInterval(() => {
       if (!shareStatus) {
-        axios.get("http://localhost:5000/insurance/poll").then((response) => {
+        axios.get("http://localhost:5000/health/poll").then((response) => {
           if (response.status === 200) {
             setShareStatus(true);
           }
@@ -41,37 +41,38 @@ function GetInsuranceId() {
 
   useEffect(() => {
     if (shareStatus) {
-      axios.post("http://localhost:5000/insurance/cred").then((response) => {
+      axios.post("http://localhost:5000/health/cred").then((response) => {
         setCredImageUrl(response.data.qrcode);
       });
     }
   }, [shareStatus]);
 
   function incrementIdx() {
-    if (activeIdx < insuranceMenuProps.menuItems.length - 1) {
+    if (activeIdx < healthMenuProps.menuItems.length - 1) {
       setActiveIdx(activeIdx + 1);
     } else {
       // eslint-disable-next-line no-restricted-globals
-      location.href = "/seeyou?from=We Care Pvt Ltd&to=FlexLand Dashboard&url=";
+      location.href =
+        "/seeyou?from=St Generals Hospital&to=FlexLand Dashboard&url=";
     }
   }
 
-  const insuranceMenuProps: GetCredMenuProps = {
-    label: insuranceCoverage.idType,
+  const healthMenuProps: GetCredMenuProps = {
+    label: healthId.idType,
     menuItems: [
-      "Insurance Coverage",
+      "Health ID",
       "Share Your Credentials",
       "Get Verified",
-      "Receive Insurance Coverage ID",
+      "Receive Health ID",
     ],
     activeIdx: 0,
   };
 
-  const insuranceInfoProps: GetCredInfoProps = {
-    title: "Get your insurance",
+  const healthInfoProps: GetCredInfoProps = {
+    title: "Get a digital Health ID",
     contentItems: ["ABC", "DEF"],
-    shareString: "We Care Pvt Ltd will ask you to share:",
-    toShare: insuranceCoverage.toShare,
+    shareString: "St. Generals Hospital will asks you to share:",
+    toShare: healthId.toShare,
     incrementFn: incrementIdx,
   };
 
@@ -79,17 +80,17 @@ function GetInsuranceId() {
     if (activeIdx === 0) {
       return (
         <GetCredInfo
-          title={insuranceInfoProps.title}
-          contentItems={insuranceInfoProps.contentItems}
-          shareString={insuranceInfoProps.shareString}
-          toShare={insuranceInfoProps.toShare}
-          incrementFn={insuranceInfoProps.incrementFn}
+          title={healthInfoProps.title}
+          contentItems={healthInfoProps.contentItems}
+          shareString={healthInfoProps.shareString}
+          toShare={healthInfoProps.toShare}
+          incrementFn={healthInfoProps.incrementFn}
         />
       );
     } else if (activeIdx === 1) {
       return (
         <GetCredShare
-          toShare={insuranceCoverage.toShare}
+          toShare={healthId.toShare}
           shareStatus={shareStatus}
           imageUrl={prImageUrl}
           incrementFn={incrementIdx}
@@ -97,15 +98,12 @@ function GetInsuranceId() {
       );
     } else if (activeIdx === 2) {
       return (
-        <GetCredVerifying
-          name={insuranceCoverage.title}
-          incrementFn={incrementIdx}
-        />
+        <GetCredVerifying name={healthId.title} incrementFn={incrementIdx} />
       );
     } else {
       return (
         <GetCredReceive
-          idType={insuranceCoverage.idType}
+          idType={healthId.idType}
           imageUrl={credImageUrl}
           incrementFn={incrementIdx}
         />
@@ -115,15 +113,12 @@ function GetInsuranceId() {
 
   return (
     <>
-      <GetCredBanner
-        imageUrl={insuranceCoverage.imageUrl}
-        title={insuranceCoverage.title}
-      />
+      <GetCredBanner imageUrl={healthId.imageUrl} title={healthId.title} />
       <div className="columns">
         <div className="column is-one-quarter">
           <GetCredMenu
-            label={insuranceMenuProps.label}
-            menuItems={insuranceMenuProps.menuItems}
+            label={healthMenuProps.label}
+            menuItems={healthMenuProps.menuItems}
             activeIdx={activeIdx}
           />
         </div>
@@ -133,4 +128,4 @@ function GetInsuranceId() {
   );
 }
 
-export default GetInsuranceId;
+export default GetHealthId;

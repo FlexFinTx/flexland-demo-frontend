@@ -1,12 +1,13 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import GetBusId from './pages/GetBusId';
-import GetCityId from './pages/GetCityId';
-import GetDegreeId from './pages/GetDegreeId';
-import GetInsuranceId from './pages/GetInsuranceId';
-import GetJobId from './pages/GetJobId';
+import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import GetBusId from "./pages/GetBusId";
+import GetCityId from "./pages/GetCityId";
+import GetDegreeId from "./pages/GetDegreeId";
+import GetHealthId from "./pages/GetHealthId";
+import GetInsuranceId from "./pages/GetInsuranceId";
+import GetJobId from "./pages/GetJobId";
 import Homepage from "./pages/Homepage";
-import SeeYou from './pages/SeeYou';
+import SeeYou from "./pages/SeeYou";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route exact path="/jobid" component={GetJobId} />
         <Route exact path="/busid" component={GetBusId} />
         <Route exact path="/insuranceid" component={GetInsuranceId} />
+        <Route exact path="/healthid" component={GetHealthId} />
       </Switch>
     </Router>
   );

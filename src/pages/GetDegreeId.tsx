@@ -1,12 +1,16 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import GetCredBanner from "../components/GetCredBanner/GetCredBanner";
-import GetCredInfo, { GetCredInfoProps } from "../components/GetCredInfo/GetCredInfo";
-import GetCredMenu, { GetCredMenuProps } from "../components/GetCredMenu/GetCredMenu";
+import GetCredInfo, {
+  GetCredInfoProps,
+} from "../components/GetCredInfo/GetCredInfo";
+import GetCredMenu, {
+  GetCredMenuProps,
+} from "../components/GetCredMenu/GetCredMenu";
 import GetCredReceive from "../components/GetCredReceive/GetCredReceive";
 import GetCredShare from "../components/GetCredShare/GetCredShare";
 import GetCredVerifying from "../components/GetCredVerifying/GetCredVerifying";
-import { degreeIdCard, sampleCredential, samplePresentationRequest } from "../constants"
+import { degreeIdCard } from "../constants";
 
 function GetDegreeId() {
   const [activeIdx, setActiveIdx] = useState(0);
@@ -18,84 +22,114 @@ function GetDegreeId() {
   const [credImageUrl, setCredImageUrl] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/degree/pr").then(response => {
+    axios.get("http://localhost:5000/degree/pr").then((response) => {
       setPrImageUrl(response.data.qrcode);
-    })
-  }, [])
+    });
+  }, []);
 
   useEffect(() => {
     setInterval(() => {
       if (!shareStatus) {
-        axios.get("http://localhost:5000/degree/poll").then(response => {
+        axios.get("http://localhost:5000/degree/poll").then((response) => {
           if (response.status === 200) {
             setShareStatus(true);
           }
-        })
+        });
       }
-    }, 2000)
-  }, [])
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     if (shareStatus) {
-      axios.post("http://localhost:5000/degree/cred").then(response => {
+      axios.post("http://localhost:5000/degree/cred").then((response) => {
         setCredImageUrl(response.data.qrcode);
-      })
+      });
     }
-  }, [shareStatus])
+  }, [shareStatus]);
 
   function incrementIdx() {
     if (activeIdx < degreeMenuProps.menuItems.length - 1) {
       setActiveIdx(activeIdx + 1);
     } else {
       // eslint-disable-next-line no-restricted-globals
-      location.href = "/seeyou?from=University of FlexLand&to=FlexLand Dashboard&url=";
+      location.href =
+        "/seeyou?from=University of FlexLand&to=FlexLand Dashboard&url=";
     }
   }
 
   const degreeMenuProps: GetCredMenuProps = {
     label: degreeIdCard.idType,
     menuItems: ["Degree", "Share City ID", "Get Verified", "Receive Degree"],
-    activeIdx: 0
-  }
+    activeIdx: 0,
+  };
 
   const degreeInfoProps: GetCredInfoProps = {
     title: "Get a digital verification of your Diploma",
     contentItems: [
       "Share your educational information easily in your job interview or when you apply to a post-graduate program.",
-      "Get discounts or free access to services and programs all around the world."
+      "Get discounts or free access to services and programs all around the world.",
     ],
     shareString: "The University of FlexLand will ask you to share:",
     toShare: degreeIdCard.toShare,
-    incrementFn: incrementIdx
-  }
+    incrementFn: incrementIdx,
+  };
 
   function showScreen() {
     if (activeIdx === 0) {
       return (
-        <GetCredInfo title={degreeInfoProps.title} contentItems={degreeInfoProps.contentItems} shareString={degreeInfoProps.shareString} toShare={degreeInfoProps.toShare} incrementFn={degreeInfoProps.incrementFn} />
-      )
+        <GetCredInfo
+          title={degreeInfoProps.title}
+          contentItems={degreeInfoProps.contentItems}
+          shareString={degreeInfoProps.shareString}
+          toShare={degreeInfoProps.toShare}
+          incrementFn={degreeInfoProps.incrementFn}
+        />
+      );
     } else if (activeIdx === 1) {
-      return (<GetCredShare toShare={degreeIdCard.toShare} shareStatus={shareStatus} imageUrl={prImageUrl} incrementFn={incrementIdx} />)
+      return (
+        <GetCredShare
+          toShare={degreeIdCard.toShare}
+          shareStatus={shareStatus}
+          imageUrl={prImageUrl}
+          incrementFn={incrementIdx}
+        />
+      );
     } else if (activeIdx === 2) {
-      return (<GetCredVerifying name={degreeIdCard.title} incrementFn={incrementIdx} />)
+      return (
+        <GetCredVerifying
+          name={degreeIdCard.title}
+          incrementFn={incrementIdx}
+        />
+      );
     } else {
-      return (<GetCredReceive idType={degreeIdCard.idType} imageUrl={credImageUrl} incrementFn={incrementIdx} />)
+      return (
+        <GetCredReceive
+          idType={degreeIdCard.idType}
+          imageUrl={credImageUrl}
+          incrementFn={incrementIdx}
+        />
+      );
     }
   }
 
   return (
     <>
-      <GetCredBanner imageUrl={degreeIdCard.imageUrl} title={degreeIdCard.title} />
+      <GetCredBanner
+        imageUrl={degreeIdCard.imageUrl}
+        title={degreeIdCard.title}
+      />
       <div className="columns">
         <div className="column is-one-quarter">
-          <GetCredMenu label={degreeMenuProps.label} menuItems={degreeMenuProps.menuItems} activeIdx={activeIdx} />
+          <GetCredMenu
+            label={degreeMenuProps.label}
+            menuItems={degreeMenuProps.menuItems}
+            activeIdx={activeIdx}
+          />
         </div>
-        <div className="column is-half">
-          {showScreen()}
-        </div>
+        <div className="column is-half">{showScreen()}</div>
       </div>
     </>
-  )
+  );
 }
 
 export default GetDegreeId;

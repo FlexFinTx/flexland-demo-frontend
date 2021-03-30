@@ -22,7 +22,7 @@ function GetHealthId() {
   const [credImageUrl, setCredImageUrl] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/health/pr").then((response) => {
+    axios.get("https://flexland-backend.flexfintx.com/health/pr").then((response) => {
       setPrImageUrl(response.data.qrcode);
     });
   }, []);
@@ -30,7 +30,7 @@ function GetHealthId() {
   useEffect(() => {
     setInterval(() => {
       if (!shareStatus) {
-        axios.get("http://localhost:5000/health/poll").then((response) => {
+        axios.get("https://flexland-backend.flexfintx.com/health/poll").then((response) => {
           if (response.status === 200) {
             setShareStatus(true);
           }
@@ -41,7 +41,7 @@ function GetHealthId() {
 
   useEffect(() => {
     if (shareStatus) {
-      axios.post("http://localhost:5000/health/cred").then((response) => {
+      axios.post("https://flexland-backend.flexfintx.com/health/cred").then((response) => {
         setCredImageUrl(response.data.qrcode);
       });
     }

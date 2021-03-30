@@ -22,7 +22,7 @@ function GetInsuranceId() {
   const [credImageUrl, setCredImageUrl] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/insurance/pr").then((response) => {
+    axios.get("https://flexland-backend.flexfintx.com/insurance/pr").then((response) => {
       setPrImageUrl(response.data.qrcode);
     });
   }, []);
@@ -30,7 +30,7 @@ function GetInsuranceId() {
   useEffect(() => {
     setInterval(() => {
       if (!shareStatus) {
-        axios.get("http://localhost:5000/insurance/poll").then((response) => {
+        axios.get("https://flexland-backend.flexfintx.com/insurance/poll").then((response) => {
           if (response.status === 200) {
             setShareStatus(true);
           }
@@ -41,7 +41,7 @@ function GetInsuranceId() {
 
   useEffect(() => {
     if (shareStatus) {
-      axios.post("http://localhost:5000/insurance/cred").then((response) => {
+      axios.post("https://flexland-backend.flexfintx.com/insurance/cred").then((response) => {
         setCredImageUrl(response.data.qrcode);
       });
     }

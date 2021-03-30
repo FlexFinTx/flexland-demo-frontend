@@ -29,7 +29,7 @@ function GetCityId() {
   const [submitInfo, setSubmitInfo] = useState<CitySubmitInfo>();
 
   useEffect(() => {
-    axios.get("http://localhost:5000/did/pr").then(response => {
+    axios.get("https://flexland-backend.flexfintx.com/did/pr").then(response => {
       setPrImageUrl(response.data.qrcode);
     })
   }, [])
@@ -37,7 +37,7 @@ function GetCityId() {
   useEffect(() => {
     setInterval(() => {
       if (!shareStatus) {
-      axios.get("http://localhost:5000/did/poll").then(response => {
+      axios.get("https://flexland-backend.flexfintx.com/did/poll").then(response => {
         if (response.status === 200) {
           setShareStatus(true);
         }
@@ -49,7 +49,7 @@ function GetCityId() {
   useEffect(() => {
     if (submitInfo) {
     console.log(submitInfo);
-    axios.post("http://localhost:5000/city/cred", {
+    axios.post("https://flexland-backend.flexfintx.com/city/cred", {
       ...submitInfo
     }).then(response => {
       setCredImageUrl(response.data.qrcode);

@@ -22,7 +22,7 @@ function GetBusId() {
   const [credImageUrl, setCredImageUrl] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/bus/pr").then((response) => {
+    axios.get("https://flexland-backend.flexfintx.com/bus/pr").then((response) => {
       setPrImageUrl(response.data.qrcode);
     });
   }, []);
@@ -30,7 +30,7 @@ function GetBusId() {
   useEffect(() => {
     setInterval(() => {
       if (!shareStatus) {
-        axios.get("http://localhost:5000/bus/poll").then((response) => {
+        axios.get("https://flexland-backend.flexfintx.com/bus/poll").then((response) => {
           if (response.status === 200) {
             setShareStatus(true);
           }
@@ -41,7 +41,7 @@ function GetBusId() {
 
   useEffect(() => {
     if (shareStatus) {
-      axios.post("http://localhost:5000/bus/cred").then((response) => {
+      axios.post("https://flexland-backend.flexfintx.com/bus/cred").then((response) => {
         setCredImageUrl(response.data.qrcode);
       });
     }
